@@ -1,7 +1,7 @@
 // Spec of RC data
 
 #define CHANNELS 8
-#define IN_PIN 2 
+#define IN_PIN 2 //GPIO2, D4 on wemos D1 mini
 
 typedef struct 
 {
