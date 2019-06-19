@@ -6,7 +6,7 @@
 volatile uint32_t last = 0;
 volatile uint8_t  chan = 0;
 
-void rxInt() 
+ICACHE_RAM_ATTR void rxInt() 
 {
     uint32_t now,diff; 
     now = micros();
