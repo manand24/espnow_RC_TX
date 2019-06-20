@@ -6,3 +6,4 @@ You got to flash the server (receiver) first and write down the MAC. Use arduino
 
 This does 8 channels and is synchronized to the PPM input.
 
+![DSC02359.jpg](DSC02359.jpg "Wiring")
