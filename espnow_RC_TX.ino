@@ -1,7 +1,7 @@
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 
 extern "C" { 
-  #include <espnow.h> 
+  #include <esp_now.h> 
 }
 
 //ADC_MODE(ADC_VCC);
@@ -9,7 +9,7 @@ extern "C" {
 #include "RC.h"
 
 // this is the MAC Address of the remote ESP 
-  uint8_t remoteMac1[] = {0xEC, 0xFA, 0xBC, 0x07, 0xE4, 0x0D}; // Server MAC
+  uint8_t remoteMac1[] = {0x24, 0x6F, 0x28, 0xAA, 0x3B, 0x18}; // Server MAC
   uint8_t remoteMac2[] = {0xEC, 0xFA, 0xBC, 0x07, 0xE2, 0xAB};
 
 #define WIFI_CHANNEL 4
@@ -19,11 +19,11 @@ volatile boolean recv;
 uint8_t TdataLen;
 uint8_t Tdata[TdataSizeMax];
 
-void recv_cb(u8 *macaddr, u8 *data, u8 len)
+void recv_cb(const uint8_t  *macaddr, const uint8_t  *data, int len)
 {
   recv = true;
-  //Serial.print("recv_cb ");
-  //Serial.println(len); 
+  Serial.print("recv_cb ");
+  Serial.println(len); 
   if (len <= TdataSizeMax)
   {
     TdataLen = len;
@@ -31,9 +31,9 @@ void recv_cb(u8 *macaddr, u8 *data, u8 len)
   }
 };
 
-void send_cb(uint8_t* mac, uint8_t sendStatus) 
+void send_cb(const uint8_t* mac, esp_now_send_status_t  sendStatus) 
 {
-  //Serial.print("send_cb ");
+  Serial.print("send_cb ");
 };
 
 void setup() 
@@ -48,8 +48,12 @@ void setup()
 
   if (esp_now_init() != 0) Serial.println("*** ESP_Now init failed");
 
-  esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
-  esp_now_add_peer(remoteMac1, ESP_NOW_ROLE_COMBO, WIFI_CHANNEL, NULL, 0);
+  esp_now_peer_info peer = { 
+                   { 0x24, 0x6F, 0x28, 0xAA, 0x3B, 0x18 }, 
+                   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},  
+                   WIFI_CHANNEL, ESP_IF_WIFI_STA, false, NULL };
+  //esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
+  esp_now_add_peer(&peer);
   //esp_now_add_peer(remoteMac2, ESP_NOW_ROLE_COMBO, WIFI_CHANNEL, NULL, 0);
 
   esp_now_register_recv_cb(recv_cb);
@@ -96,5 +100,3 @@ void loop()
 
   //Serial.println(analogRead(A0));
 }
-
-
